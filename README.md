@@ -7,6 +7,7 @@
 ![](https://github.com/tiandi0228/electron_weather/blob/main/demo/demo.png)
 ![](https://github.com/tiandi0228/electron_weather/blob/main/demo/demo1.png)
 ![](https://github.com/tiandi0228/electron_weather/blob/main/demo/demo2.png)
+![](https://github.com/tiandi0228/electron_weather/blob/main/demo/demo3.png)
 
 ### 安装
 
