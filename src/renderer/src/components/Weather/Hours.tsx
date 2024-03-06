@@ -27,7 +27,7 @@ const HoursWeather: React.FC<HoursWeatherProps> = (props) => {
     useEffect(() => {
         if (!isRefresh) return
         getHoursWeather()
-    }, [isRefresh, location?.select?.city])
+    }, [isRefresh, location?.select?.lng])
 
     const getHoursWeather = () => {
         const lng = location?.select?.lng ? location.select?.lng : location?.location?.lng ?? ''

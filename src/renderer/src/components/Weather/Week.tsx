@@ -28,7 +28,7 @@ const WeekWeather: React.FC<WeekWeatherProps> = (props) => {
     useEffect(() => {
         if (!isRefresh) return
         getWeekWeather()
-    }, [isRefresh, location?.select?.city])
+    }, [isRefresh, location?.select?.lng])
 
     const getWeekWeather = () => {
         const lng = location?.select?.lng ? location.select?.lng : location?.location?.lng ?? ''

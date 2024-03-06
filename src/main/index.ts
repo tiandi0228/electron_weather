@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell, Tray } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron'
 import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -35,6 +35,7 @@ function createWindow(): void {
     mainWindow.setSkipTaskbar(true)
 
     mainWindow.on('ready-to-show', () => {
+        Menu.setApplicationMenu(null)
         mainWindow.hide()
     })
 
