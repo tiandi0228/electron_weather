@@ -2,6 +2,8 @@
 
 使用electron + react 开发一款桌面版本的天气预报app
 
+- 使用的是和风天气的免费接口，key可以自己去申请
+
 ### 演示
 
 ![](https://github.com/tiandi0228/electron_weather/blob/main/demo/demo.png)
