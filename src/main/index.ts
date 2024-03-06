@@ -13,7 +13,7 @@ let serverProcess
 function createWindow(): void {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 1350,
+        width: 350,
         height: 470,
         show: false,
         frame: false,
@@ -27,7 +27,7 @@ function createWindow(): void {
         }
     })
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
     // 保持置顶
     // mainWindow.setAlwaysOnTop(true)
