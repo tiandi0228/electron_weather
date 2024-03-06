@@ -91,9 +91,7 @@ const City: React.FC<CityProps> = (props) => {
                                 onChange(false)
                             }}
                         >
-                            {index === 0 && (
-                                <Icon className='mr-1' name="location" />
-                            )}
+                            {index === 0 && <Icon className="mr-1" name="location" />}
                             <span>{city.name}</span>
                         </div>
                     )

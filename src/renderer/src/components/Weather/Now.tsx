@@ -11,10 +11,12 @@ import Icon from '@renderer/components/Icon'
 type NowWeatherProps = {
     onChange?: (isVisible: boolean) => void
     onChangeCity?: (isVisible: boolean) => void
+    isRefresh?: boolean
+    location?: LocationProps
 }
 
 const NowWeather: React.FC<NowWeatherProps> = (props) => {
-    const { onChange, onChangeCity } = props
+    const { onChange, onChangeCity, isRefresh, location } = props
 
     const [now, setNow] = useState<NowProps>({
         text: '',
@@ -27,15 +29,15 @@ const NowWeather: React.FC<NowWeatherProps> = (props) => {
         level: ''
     })
     const [key] = useDexieLiveState<string>(db.simpleStructSaveSTate, 'key', '')
-    const [location, setLocation] = useDexieLiveState<LocationProps>(
+    const [_location, setLocation] = useDexieLiveState<LocationProps>(
         db.simpleStructSaveSTate,
         'location-key',
         {}
     )
 
     // 空气质量
-    const air =  {
-        '1':'border-green-300  text-green-300',
+    const air = {
+        '1': 'border-green-300  text-green-300',
         '2': 'border-amber-100  text-amber-100',
         '3': 'border-amber-300  text-amber-300',
         '4': 'border-amber-500  text-amber-500',
@@ -58,42 +60,42 @@ const NowWeather: React.FC<NowWeatherProps> = (props) => {
             return '极强'
         }
     }
-
     useEffect(() => {
-        if (key) {
-            const lng = location.select?.lng ? location.select?.lng : location.location?.lng
-            const lat = location.select?.lat ? location.select?.lat : location.location?.lat
-            if (lng && lat) getNowWeather(lng, lat)
-        }
-    }, [key])
-
-    useEffect(() => {
-        if (location.select?.city) {
+        window.electron.ipcRenderer.on('refresh', () => {
             getLocation()
+        })
+        return () => {
+            window.electron.ipcRenderer.removeAllListeners('refresh')
         }
-    }, [location.select?.city])
+    }, [location?.select?.city])
+
+    useEffect(() => {
+        if (!isRefresh) return
+        getLocation()
+    }, [isRefresh, location?.select?.city])
 
     // 获取城市经纬度
     const getLocation = () => {
-        getGeo(location.select?.city ?? '').then((res: any) => {
-            const _location: LocationProps = {
-                location: location.location,
-                select: {
-                    id: res.id,
-                    lng: res.lng,
-                    lat: res.lat,
-                    city: res.city
+        if (location?.select?.city) {
+            getGeo(location.select?.city ?? '').then((res: any) => {
+                const _location: LocationProps = {
+                    location: location.location,
+                    select: {
+                        id: res.id,
+                        lng: res.lng,
+                        lat: res.lat,
+                        city: res.city
+                    }
                 }
-            }
-            setLocation(_location)
-            getNowWeather(res.lng, res.lat)
-        })
+                setLocation(_location)
+                getNowWeather(res.lng, res.lat)
+            })
+        }
     }
 
     // 获取实时天气数据
     const getNowWeather = (lng: string, lat: string) => {
         if (key && lng && lat) {
-            console.log('lng: ', lng, 'lat: ', lat)
             getWeather({ lng, lat })
                 .then((res: any) => {
                     setNow({
@@ -106,7 +108,7 @@ const NowWeather: React.FC<NowWeatherProps> = (props) => {
                         pressure: res.pressure,
                         temp: res.temp,
                         category: res.category,
-                        level: res.level,
+                        level: res.level
                     })
                 })
                 .catch(() => {
@@ -126,7 +128,9 @@ const NowWeather: React.FC<NowWeatherProps> = (props) => {
             <div className="flex justify-between">
                 <div className="text-gray-400 text-xs">
                     <span className="text-white">
-                        {location.select?.city ? location.select?.city : location.location?.city}
+                        {location?.select?.city
+                            ? location?.select?.city
+                            : location?.location?.city ?? ''}
                     </span>
                     <span className="pl-1 cursor-pointer" onClick={() => onChangeCity?.(true)}>
                         切换
@@ -134,20 +138,6 @@ const NowWeather: React.FC<NowWeatherProps> = (props) => {
                 </div>
                 <div className="text-gray-400 text-xs flex items-center">
                     <span>{now.updateTime} 更新</span>
-                    <div
-                        className="pl-1 cursor-pointer"
-                        onClick={() => {
-                            const lng = location.select?.lng
-                                ? location.select?.lng
-                                : location.location?.lng
-                            const lat = location.select?.lat
-                                ? location.select?.lat
-                                : location.location?.lat
-                            if (lng && lat) getNowWeather(lng, lat)
-                        }}
-                    >
-                        <Icon name='refresh' size={13} />
-                    </div>
                 </div>
             </div>
             <div className="py-4 flex items-center">

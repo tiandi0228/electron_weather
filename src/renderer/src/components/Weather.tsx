@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NowWeather from '@renderer/components/Weather/Now'
 import HoursWeather from '@renderer/components/Weather/Hours'
 import WeekWeather from '@renderer/components/Weather/Week'
@@ -10,10 +10,11 @@ import Icon from '@renderer/components/Icon'
 type WeatherProps = {
     onChange: (isVisible: boolean) => void
     onChangeCity: (isVisible: boolean) => void
+    isRefreshData?: boolean
 }
 
 const Weather: React.FC<WeatherProps> = (props) => {
-    const { onChange, onChangeCity } = props
+    const { onChange, onChangeCity, isRefreshData } = props
 
     const [isRefresh, setIsRefresh] = useState<boolean>(false)
 
@@ -22,7 +23,21 @@ const Weather: React.FC<WeatherProps> = (props) => {
         'location-key',
         {}
     )
-    const [key] = useDexieLiveState<string>(db.simpleStructSaveSTate, 'key', '')
+
+    useEffect(() => {
+        window.electron.ipcRenderer.on('refresh', () => {
+            setIsRefresh(true)
+        })
+        return () => {
+            setIsRefresh(false)
+            window.electron.ipcRenderer.removeAllListeners('refresh')
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!isRefreshData) return
+        setIsRefresh(true)
+    }, [isRefreshData])
 
     return (
         <>
@@ -35,14 +50,13 @@ const Weather: React.FC<WeatherProps> = (props) => {
                 </div>
             </div>
             <NowWeather
+                isRefresh={isRefresh}
+                location={location}
                 onChange={onChange}
-                onChangeCity={() => {
-                    onChangeCity(true)
-                    setIsRefresh(true)
-                }}
+                onChangeCity={() => onChangeCity(true)}
             />
-            <HoursWeather isRefresh={isRefresh} />
-            <WeekWeather apiKey={key} location={location} />
+            <HoursWeather isRefresh={isRefresh} location={location} />
+            <WeekWeather isRefresh={isRefresh} location={location} />
         </>
     )
 }

@@ -1,6 +1,4 @@
 import { getHours } from '@renderer/api'
-import { db } from '@renderer/db'
-import useDexieLiveState from '@renderer/hooks/useDexieLiveState'
 import { LocationProps } from '@renderer/types/location'
 import { HoursProps } from '@renderer/types/weather'
 import moment from 'moment'
@@ -8,35 +6,32 @@ import { useEffect, useState } from 'react'
 import Icon from '@renderer/components/Icon'
 
 type HoursWeatherProps = {
-    isRefresh: boolean
+    isRefresh?: boolean
+    location?: LocationProps
 }
 
 const HoursWeather: React.FC<HoursWeatherProps> = (props) => {
-    const { isRefresh } = props
+    const { isRefresh, location } = props
 
-    const [location] = useDexieLiveState<LocationProps>(
-        db.simpleStructSaveSTate,
-        'location-key',
-        {}
-    )
-    const [key] = useDexieLiveState<string>(db.simpleStructSaveSTate, 'key', '')
     const [list, setList] = useState<HoursProps[]>([])
 
     useEffect(() => {
-        if (isRefresh) {
+        window.electron.ipcRenderer.on('refresh', () => {
             getHoursWeather()
+        })
+        return () => {
+            window.electron.ipcRenderer.removeAllListeners('refresh')
         }
-    }, [isRefresh])
+    }, [location?.select?.city])
 
     useEffect(() => {
-        if (key) {
-            getHoursWeather()
-        }
-    }, [key])
+        if (!isRefresh) return
+        getHoursWeather()
+    }, [isRefresh, location?.select?.city])
 
     const getHoursWeather = () => {
-        const lng = location.select?.lng ? location.select?.lng : location.location?.lng
-        const lat = location.select?.lat ? location.select?.lat : location.location?.lat
+        const lng = location?.select?.lng ? location.select?.lng : location?.location?.lng ?? ''
+        const lat = location?.select?.lat ? location.select?.lat : location?.location?.lat ?? ''
         if (!lng && !lat) return
         getHours({ lng, lat }).then((res: any) => {
             setList(res)

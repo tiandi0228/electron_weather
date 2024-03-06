@@ -61,6 +61,8 @@ function createWindow(): void {
         const isVisible = mainWindow.isVisible()
         if (!isVisible) {
             mainWindow.show()
+            // 每次打开窗口时，发送消息到react，让其重新获取天气信息
+            mainWindow.webContents.send('refresh')
         } else {
             mainWindow.focus()
         }

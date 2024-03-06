@@ -46,7 +46,7 @@ export class Request {
                     modal({
                         content: res.data.message
                     })
-                    return
+                    return Promise.reject(res.data)
                 }
                 return res
             },

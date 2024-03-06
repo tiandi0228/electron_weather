@@ -7,22 +7,33 @@ import { useEffect, useState } from 'react'
 import Icon from '@renderer/components/Icon'
 
 type WeekWeatherProps = {
-    apiKey?: string
     location?: LocationProps
+    isRefresh?: boolean
 }
 
 const WeekWeather: React.FC<WeekWeatherProps> = (props) => {
-    const { apiKey, location } = props
+    const { isRefresh, location } = props
 
     const [list, setList] = useState<WeekProps[]>([])
 
     useEffect(() => {
+        window.electron.ipcRenderer.on('refresh', () => {
+            getWeekWeather()
+        })
+        return () => {
+            window.electron.ipcRenderer.removeAllListeners('refresh')
+        }
+    }, [location?.select?.city])
+
+    useEffect(() => {
+        if (!isRefresh) return
         getWeekWeather()
-    }, [apiKey])
+    }, [isRefresh, location?.select?.city])
 
     const getWeekWeather = () => {
-        const lng = location.select?.lng ? location.select?.lng : location.location?.lng
-        const lat = location.select?.lat ? location.select?.lat : location.location?.lat
+        const lng = location?.select?.lng ? location.select?.lng : location?.location?.lng ?? ''
+        const lat = location?.select?.lat ? location.select?.lat : location?.location?.lat ?? ''
+
         if (!lng && !lat) return
         getWeek({ lng, lat }).then((res: any) => {
             setList(res)
@@ -55,7 +66,7 @@ const WeekWeather: React.FC<WeekWeatherProps> = (props) => {
                                 <div className="text-xs text-white">{item.tempMin}°</div>
                             </div>
                             <div className="m-auto w-3 ml-2">
-                            <Icon name={item.iconNight ?? ''} />
+                                <Icon name={item.iconNight ?? ''} />
                             </div>
                         </div>
                     ))}

@@ -18,6 +18,7 @@ function App(): ReactElement {
             location: {}
         }
     )
+    const [isRefresh, setIsRefresh] = useState<boolean>(false)
 
     useEffect(() => {
         if (key && ipKey) {
@@ -45,13 +46,19 @@ function App(): ReactElement {
         <div className="h-screen bg-[#1B1B1D] p-4 select-none overflow-x-hidden overflow-y-auto">
             {!isVisible && !isVisibleCity ? (
                 <Weather
+                    isRefreshData={isRefresh}
                     onChange={(isVisible) => setIsVisible(isVisible)}
                     onChangeCity={(isVisibleCity) => setIsVisibleCity(isVisibleCity)}
                 />
             ) : null}
             {isVisible ? <SetUp onChange={(isVisible) => setIsVisible(isVisible)} /> : null}
             {isVisibleCity ? (
-                <City onChange={(isVisibleCity) => setIsVisibleCity(isVisibleCity)} />
+                <City
+                    onChange={(isVisibleCity) => {
+                        setIsVisibleCity(isVisibleCity)
+                        setIsRefresh(true)
+                    }}
+                />
             ) : null}
         </div>
     )

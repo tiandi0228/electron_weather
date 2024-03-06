@@ -150,22 +150,6 @@ app.get('/api/geo', (req, res) => {
                         message: 'success'
                     })
                 )
-            } else if (res1.data.code === '402') {
-                res.send(
-                    JSON.stringify({
-                        code: 402,
-                        data: null,
-                        message: '天气接口超过访问次数或余额不足以支持继续访问服务。'
-                    })
-                )
-            } else if (res1.data.code === '401') {
-                res.send(
-                    JSON.stringify({
-                        code: 401,
-                        data: null,
-                        message: '天气接口认证失败，可能使用了错误的KEY、数字签名错误、KEY的类型错误'
-                    })
-                )
             }
         })
 })
@@ -192,22 +176,6 @@ app.get('/api/24h', (req, res) => {
                     code: 0,
                     data: arr,
                     message: 'success'
-                })
-            )
-        } else if (res1.data.code === '402') {
-            res.send(
-                JSON.stringify({
-                    code: 402,
-                    data: null,
-                    message: '天气接口超过访问次数或余额不足以支持继续访问服务。'
-                })
-            )
-        } else if (res1.data.code === '401') {
-            res.send(
-                JSON.stringify({
-                    code: 401,
-                    data: null,
-                    message: '天气接口认证失败，可能使用了错误的KEY、数字签名错误、KEY的类型错误'
                 })
             )
         }
@@ -238,22 +206,6 @@ app.get('/api/7d', (req, res) => {
                     code: 0,
                     data: arr,
                     message: 'success'
-                })
-            )
-        } else if (res1.data.code === '402') {
-            res.send(
-                JSON.stringify({
-                    code: 402,
-                    data: null,
-                    message: '天气接口超过访问次数或余额不足以支持继续访问服务。'
-                })
-            )
-        } else if (res1.data.code === '401') {
-            res.send(
-                JSON.stringify({
-                    code: 401,
-                    data: null,
-                    message: '天气接口认证失败，可能使用了错误的KEY、数字签名错误、KEY的类型错误'
                 })
             )
         }
