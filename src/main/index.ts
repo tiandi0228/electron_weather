@@ -104,9 +104,9 @@ app.whenReady().then(() => {
 
 // 启动服务用来做api接口处理
 function createBackgroundProcess() {
-    serverProcess = fork(__dirname + '/server.js', ['--subprocess', app.getVersion()])
+    serverProcess = fork(__dirname + '/server.js', ['args'])
     serverProcess.on('message', (msg) => {
-        console.log(msg)
+        console.log('child_process message: ', msg)
     })
 }
 
@@ -115,6 +115,11 @@ app.on('ready', () => {
     app.dock.hide()
 
     createBackgroundProcess()
+
+    // 退出app
+    ipcMain.on('quit', () => {
+        app.quit()
+    })
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

@@ -22,7 +22,7 @@ const HoursWeather: React.FC<HoursWeatherProps> = (props) => {
         return () => {
             window.electron.ipcRenderer.removeAllListeners('refresh')
         }
-    }, [location?.select?.city])
+    }, [location?.select?.city, location?.location?.city])
 
     useEffect(() => {
         if (!isRefresh) return

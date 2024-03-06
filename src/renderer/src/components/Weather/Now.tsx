@@ -67,7 +67,7 @@ const NowWeather: React.FC<NowWeatherProps> = (props) => {
         return () => {
             window.electron.ipcRenderer.removeAllListeners('refresh')
         }
-    }, [location?.select?.city])
+    }, [location?.select?.city, location?.location?.city])
 
     useEffect(() => {
         if (!isRefresh) return
@@ -90,6 +90,8 @@ const NowWeather: React.FC<NowWeatherProps> = (props) => {
                 setLocation(_location)
                 getNowWeather(res.lng, res.lat)
             })
+        } else {
+            getNowWeather(location?.location?.lng ?? '', location?.location?.lat ?? '')
         }
     }
 

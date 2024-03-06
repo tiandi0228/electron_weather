@@ -41,7 +41,15 @@ const Weather: React.FC<WeatherProps> = (props) => {
 
     return (
         <>
-            <div className="w-full flex justify-end">
+            <div className="w-full flex items-center justify-between">
+                <div
+                    className="bg-[#31353E] px-3 py-1 rounded-md cursor-pointer"
+                    onClick={() => {
+                        window.electron.ipcRenderer.send('quit')
+                    }}
+                >
+                    <Icon name="quit" size={20} />
+                </div>
                 <div
                     className="bg-[#31353E] px-3 py-1 rounded-md cursor-pointer"
                     onClick={() => onChange(true)}

@@ -15,7 +15,7 @@ type Result<T> = {
 
 let instance: AxiosInstance
 
-let baseConfig: AxiosRequestConfig = { baseURL: 'http://127.0.0.1:8888/api/', timeout: 60000 }
+let baseConfig: AxiosRequestConfig = { baseURL: 'http://127.0.0.1:8088/api/', timeout: 60000 }
 
 export class Request {
     constructor(config: AxiosRequestConfig) {
