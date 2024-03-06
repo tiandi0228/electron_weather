@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import backIcon from '@renderer/assets/back.svg'
-import locationIcon from '@renderer/assets/location.svg'
 import data from '@renderer/utils/cities.json'
 import useDexieLiveState from '@renderer/hooks/useDexieLiveState'
 import { LocationProps } from '@renderer/types/location'
 import { db } from '@renderer/db'
+import Icon from '@renderer/components/Icon'
 
 type CityProps = {
     onChange: (isVisible: boolean) => void
@@ -60,7 +59,7 @@ const City: React.FC<CityProps> = (props) => {
                 className="text-white flex items-center cursor-pointer"
                 onClick={() => onChange(false)}
             >
-                <img src={backIcon} alt="返回" />
+                <Icon name="back" />
                 <span>返回</span>
             </div>
             <div className="fixed top-1/2 right-2 -translate-y-1/2">
@@ -93,7 +92,7 @@ const City: React.FC<CityProps> = (props) => {
                             }}
                         >
                             {index === 0 && (
-                                <img className="mr-1" src={locationIcon} alt={city.name} />
+                                <Icon className='mr-1' name="location" />
                             )}
                             <span>{city.name}</span>
                         </div>

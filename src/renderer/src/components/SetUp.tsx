@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { db } from '@renderer/db'
 import useDexieLiveState from '@renderer/hooks/useDexieLiveState'
-import backIcon from '@renderer/assets/back.svg'
+import Icon from '@renderer/components/Icon'
 
 type SetUpProps = { onChange: (isVisible: boolean) => void }
 
@@ -28,7 +28,7 @@ const SetUp: React.FC<SetUpProps> = (props) => {
                     onChange(false)
                 }}
             >
-                <img src={backIcon} alt="返回" />
+                <Icon name="back" />
                 <span>返回</span>
             </div>
             <div className="mt-4 flex items-center">
@@ -65,6 +65,8 @@ const SetUp: React.FC<SetUpProps> = (props) => {
                     onClick={() => {
                         setKey(str)
                         setIpKey(ipKeyStr)
+                        localStorage.setItem('key', str)
+                        localStorage.setItem('api-key', ipKey)
                         onChange(false)
                     }}
                 >

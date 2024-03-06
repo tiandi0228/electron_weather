@@ -1,20 +1,37 @@
 import { resolve } from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { defineConfig, externalizeDepsPlugin, swcPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 export default defineConfig({
-  main: {
-    plugins: [externalizeDepsPlugin()]
-  },
-  preload: {
-    plugins: [externalizeDepsPlugin()]
-  },
-  renderer: {
-    resolve: {
-      alias: {
-        '@renderer': resolve('src/renderer/src')
-      }
+    main: {
+        plugins: [externalizeDepsPlugin(), swcPlugin()],
+        build: {
+            rollupOptions: {
+                input: {
+                    index: resolve(__dirname, 'src/main/index.ts'),
+                    server: resolve(__dirname, 'src/main/server.ts')
+                }
+            }
+        }
     },
-    plugins: [react()]
-  }
+    preload: {
+        plugins: [externalizeDepsPlugin()]
+    },
+    renderer: {
+        resolve: {
+            alias: {
+                '@renderer': resolve('src/renderer/src')
+            }
+        },
+        plugins: [
+            react({
+                exclude: /\.stories\.(t|j)sx?$/,
+                include: '**/*.tsx,.svg,.png,.jpg,.webp'
+            }),
+            createSvgIconsPlugin({
+                iconDirs: [resolve(process.cwd(), 'src/renderer/src/assets/icons')],
+            })
+        ]
+    }
 })

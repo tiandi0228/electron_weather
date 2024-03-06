@@ -4,14 +4,16 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
 import { initTray } from './tray'
+import { fork } from 'child_process'
 
 let tray: Tray
 let mainWindow: BrowserWindow
+let serverProcess
 
 function createWindow(): void {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 350,
+        width: 1350,
         height: 470,
         show: false,
         frame: false,
@@ -25,7 +27,7 @@ function createWindow(): void {
         }
     })
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     // 保持置顶
     // mainWindow.setAlwaysOnTop(true)
@@ -98,50 +100,19 @@ app.whenReady().then(() => {
     })
 })
 
+// 启动服务用来做api接口处理
+function createBackgroundProcess() {
+    serverProcess = fork(__dirname + '/server.js', ['--subprocess', app.getVersion()])
+    serverProcess.on('message', (msg) => {
+        console.log(msg)
+    })
+}
+
 app.on('ready', () => {
     // 隐藏dock
     app.dock.hide()
 
-    // 获取apikey
-    ipcMain.on('api-key', (_event, data) => {
-        console.log(`data: ${data.split('|')}`)
-        const key = data.split('|')[0] || ''
-        const ipKey = data.split('|')[1] || ''
-        if (key && ipKey) {
-            // 自动获取ip
-            fetch('https://icanhazip.com/')
-                .then((response) => response.text())
-                .then((ip) => {
-                    fetch(
-                        `https://geo.ipify.org/api/v2/country,city?apiKey=${ipKey}&ipAddress=
-            ${ip}`
-                    )
-                        .then((response) => response.json())
-                        .then((res) => {
-                            if (res.code) {
-                                mainWindow.webContents.send('ip-code-error')
-                            } else {
-                                // 根据经纬度获取中文城市
-                                fetch(
-                                    `https://geoapi.qweather.com/v2/city/lookup?location=${res.location.lng + ',' + res.location.lat}&key=${key}`
-                                )
-                                    .then((response) => response.json())
-                                    .then((result) => {
-                                        if (result.code === '200') {
-                                            const location = {
-                                                id: result.location[0].id || '',
-                                                city: result.location[0].name || '',
-                                                lng: result.location[0].lon || '',
-                                                lat: result.location[0].lat || ''
-                                            }
-                                            mainWindow.webContents.send('ip', location)
-                                        }
-                                    })
-                            }
-                        })
-                })
-        }
-    })
+    createBackgroundProcess()
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -156,6 +127,10 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => {
     if (process.platform === 'win32') {
         tray.destroy()
+    }
+    if (serverProcess) {
+        serverProcess.kill()
+        serverProcess = null
     }
 })
 

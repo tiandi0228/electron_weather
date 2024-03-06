@@ -4,13 +4,14 @@ import useDexieLiveState from '@renderer/hooks/useDexieLiveState'
 import { db } from '@renderer/db'
 import { modal } from '@renderer/components/Modal'
 import { LocationProps } from '@renderer/types/location'
+import { getLocation } from '@renderer/api'
 
 function App(): ReactElement {
     const [isVisible, setIsVisible] = useState(false)
     const [isVisibleCity, setIsVisibleCity] = useState(false)
-    const [Key] = useDexieLiveState<string>(db.simpleStructSaveSTate, 'key', '')
+    const [key] = useDexieLiveState<string>(db.simpleStructSaveSTate, 'key', '')
     const [ipKey] = useDexieLiveState<string>(db.simpleStructSaveSTate, 'ip-key', '')
-    const [location] = useDexieLiveState<LocationProps>(
+    const [location, setLocation] = useDexieLiveState<LocationProps>(
         db.simpleStructSaveSTate,
         'location-key',
         {
@@ -19,24 +20,26 @@ function App(): ReactElement {
     )
 
     useEffect(() => {
-        if (Key && ipKey) {
-            console.log('ipKey: ', `${Key + '|' + ipKey}`)
+        if (key && ipKey) {
             if (location.location?.city && location.location?.lat && location.location?.lng) return
-            // 发送api-key
-            window.electron.ipcRenderer.send('api-key', `${Key + '|' + ipKey}`)
-            // 接口返回错误做处理
-            window.electron.ipcRenderer.on('ip-code-error', () => {
-                console.log(`接口返回错误`)
-                modal({
-                    content: '请配置你的ApiKey'
-                }).then((res) => {
-                    if (res) {
-                        setIsVisible(true)
-                    }
+            getLocation()
+                .then((res: any) => {
+                    setLocation({
+                        location: res,
+                        select: location.select
+                    })
                 })
-            })
+                .catch(() => {
+                    modal({
+                        content: '请配置你的ApiKey'
+                    }).then((res) => {
+                        if (res) {
+                            setIsVisible(true)
+                        }
+                    })
+                })
         }
-    }, [Key, ipKey])
+    }, [key, ipKey])
 
     return (
         <div className="h-screen bg-[#1B1B1D] p-4 select-none overflow-x-hidden overflow-y-auto">
