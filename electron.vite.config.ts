@@ -30,8 +30,19 @@ export default defineConfig({
                 include: '**/*.tsx,.svg,.png,.jpg,.webp'
             }),
             createSvgIconsPlugin({
-                iconDirs: [resolve(process.cwd(), 'src/renderer/src/assets/icons')],
+                iconDirs: [resolve(process.cwd(), 'src/renderer/src/assets/icons')]
             })
-        ]
+        ],
+        build: {
+            rollupOptions: {
+                output: {
+                    manualChunks(id): string | void {
+                        if (id.includes('node_modules')) {
+                            return 'vendor'
+                        }
+                    }
+                }
+            }
+        }
     }
 })
