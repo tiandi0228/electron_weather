@@ -44,28 +44,31 @@ const WeekWeather: React.FC<WeekWeatherProps> = (props) => {
         <div className="h-52 bg-[#31353E] p-3 mt-4 rounded-lg">
             <div className="text-gray-400 text-xs">7天预报</div>
             <div className="overflow-y-auto">
-                <div className=" h-40 pt-2">
+                <div className="w-[19.7rem] h-40 pt-2">
                     {list.map((item: WeekProps, index: number) => (
                         <div
                             className="flex items-center h-10 border-b-[1px] border-b-[#353A42]"
                             key={index}
                         >
-                            <div className="text-white text-xs">
-                                {moment(item.fxDate).format('dddd')}
+                            <div className="w-9 text-white text-xs text-center">
+                                {moment().format('YYYY-MM-DD') ===
+                                moment(item.fxDate).format('YYYY-MM-DD')
+                                    ? '今天'
+                                    : moment(item.fxDate).format('dddd')}
                             </div>
                             <div className="text-white text-xs mx-2 text-center">
-                                <div>{item.humidity}</div>
-                                <div className="w-5 h-[2px] bg-amber-400"></div>
+                                <div>{item.humidity}%</div>
+                                <div className="w-6 h-[2px] bg-amber-400"></div>
                             </div>
-                            <div className="m-auto w-4 mr-2">
+                            <div className="m-auto w-3">
                                 <Icon name={item.iconDay ?? ''} />
                             </div>
-                            <div className="flex flex-1 items-center">
+                            <div className="flex flex-1 items-center mx-2">
                                 <div className="text-xs text-white">{item.tempMax}°</div>
-                                <div className="flex-1 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl mx-2"></div>
+                                <div className="w-full h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl mx-1"></div>
                                 <div className="text-xs text-white">{item.tempMin}°</div>
                             </div>
-                            <div className="m-auto w-3 ml-2">
+                            <div className="m-auto w-3">
                                 <Icon name={item.iconNight ?? ''} />
                             </div>
                         </div>
