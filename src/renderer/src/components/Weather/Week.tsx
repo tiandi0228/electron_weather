@@ -44,7 +44,7 @@ const WeekWeather: React.FC<WeekWeatherProps> = (props) => {
         <div className="h-52 bg-[#31353E] p-3 mt-4 rounded-lg">
             <div className="text-gray-400 text-xs">7天预报</div>
             <div className="overflow-y-auto">
-                <div className="w-[19.7rem] h-40 pt-2">
+                <div className="w-[18rem] h-40 pt-2">
                     {list.map((item: WeekProps, index: number) => (
                         <div
                             className="flex items-center h-10 border-b-[1px] border-b-[#353A42]"
