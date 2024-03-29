@@ -9,8 +9,7 @@ export default defineConfig({
         build: {
             rollupOptions: {
                 input: {
-                    index: resolve(__dirname, 'src/main/index.ts'),
-                    server: resolve(__dirname, 'src/main/server.ts')
+                    index: resolve(__dirname, 'src/main/index.ts')
                 }
             }
         }

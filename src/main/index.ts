@@ -4,11 +4,10 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
 import { initTray } from './tray'
-import { fork } from 'child_process'
+import appEx from './server'
 
 let tray: Tray
 let mainWindow: BrowserWindow
-let serverProcess
 
 function createWindow(): void {
     // Create the browser window.
@@ -103,19 +102,13 @@ app.whenReady().then(() => {
     })
 })
 
-// 启动服务用来做api接口处理
-function createBackgroundProcess() {
-    serverProcess = fork(__dirname + '/server.js', ['args'])
-    serverProcess.on('message', (msg) => {
-        console.log('child_process message: ', msg)
-    })
-}
-
 app.on('ready', () => {
     // 隐藏dock
     app.dock.hide()
 
-    createBackgroundProcess()
+    appEx.listen(8088, () => {
+        console.log('服务启动成功')
+    })
 
     // 退出app
     ipcMain.on('quit', () => {
@@ -135,10 +128,6 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => {
     if (process.platform === 'win32') {
         tray.destroy()
-    }
-    if (serverProcess) {
-        serverProcess.kill()
-        serverProcess = null
     }
 })
 

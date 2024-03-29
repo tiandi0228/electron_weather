@@ -1,5 +1,5 @@
-const express = require('express')
-const axios = require('axios')
+import express from 'express'
+import axios from 'axios'
 
 const app = express()
 app.use(express.static('./'))
@@ -120,7 +120,8 @@ app.get('/api/now', (req, res) => {
                         JSON.stringify({
                             code: 401,
                             data: null,
-                            message: '天气接口认证失败，可能使用了错误的KEY、数字签名错误、KEY的类型错误'
+                            message:
+                                '天气接口认证失败，可能使用了错误的KEY、数字签名错误、KEY的类型错误'
                         })
                     )
                 }
@@ -212,4 +213,4 @@ app.get('/api/7d', (req, res) => {
     })
 })
 
-app.listen(8088)
+export default app
